@@ -89,22 +89,22 @@ func TestBinaryChunks_ToHex(t *testing.T) {
 	}
 }
 
-func TestEncode1(t *testing.T) {
+func TestDecode(t *testing.T) {
 	tests := []struct {
-		name string
-		str  string
-		want string
+		name        string
+		encodedText string
+		want        string
 	}{
 		{
-			name: "Base name",
-			str:  "My name is Ted",
-			want: "20 30 3C 18 77 4A E4 4D 28",
+			name:        "Base test",
+			encodedText: "20 30 3C 18 77 4A E4 4D 28",
+			want:        "My name is Ted",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Encode(tt.str); got != tt.want {
-				t.Errorf("Encode() = %v, want %v", got, tt.want)
+			if got := Decode(tt.encodedText); got != tt.want {
+				t.Errorf("Decode() = %v, want %v", got, tt.want)
 			}
 		})
 	}
