@@ -1,5 +1,7 @@
-package archiver
+package main
 
-func main {
-	//cmd.Execute()
+import "archiver/cmd"
+
+func main() {
+	cmd.Execute()
 }
