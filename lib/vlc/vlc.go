@@ -5,14 +5,19 @@ import (
 	"unicode"
 )
 
-const chunksSize = 8
-
 func Encode(str string) string {
 	str = prepareText(str)
 
 	chunks := splitByChunks(encodeBin(str), chunksSize)
 
 	return chunks.ToHex().ToString()
+}
+
+func Decode(encodedText string) string {
+	bString := NewHexChunks(encodedText).ToBinary().Join()
+
+	dTree := obtainEncodingTable().DecodingTree()
+	return exportText(dTree.Decode(bString))
 }
 
 func encodeBin(str string) string {
@@ -76,6 +81,31 @@ func prepareText(str string) string {
 		if unicode.IsUpper(ch) {
 			buf.WriteRune('!')
 			buf.WriteRune(unicode.ToLower(ch))
+		} else {
+			buf.WriteRune(ch)
+		}
+	}
+
+	return buf.String()
+}
+
+func exportText(str string) string {
+	var buf strings.Builder
+
+	var isCapital bool
+
+	for _, ch := range str {
+		if isCapital {
+			buf.WriteRune(unicode.ToUpper(ch))
+			isCapital = false
+
+			continue
+		}
+
+		if ch == '!' {
+			isCapital = true
+
+			continue
 		} else {
 			buf.WriteRune(ch)
 		}

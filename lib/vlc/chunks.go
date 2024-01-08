@@ -13,9 +13,22 @@ type HexChunks []HexChunk
 type HexChunk string
 type encodingTable map[rune]string
 
-func (hcs HexChunks) ToString() string {
-	const sep = " "
+const chunksSize = 8
+const hexChunksSeparator = " "
 
+func NewHexChunks(str string) HexChunks {
+	parts := strings.Split(str, hexChunksSeparator)
+
+	res := make(HexChunks, 0, len(parts))
+
+	for _, part := range parts {
+		res = append(res, HexChunk(part))
+	}
+
+	return res
+}
+
+func (hcs HexChunks) ToString() string {
 	switch len(hcs) {
 	case 0:
 		return ""
@@ -28,8 +41,41 @@ func (hcs HexChunks) ToString() string {
 	buf.WriteString(string(hcs[0]))
 
 	for _, hc := range hcs[1:] {
-		buf.WriteString(sep)
+		buf.WriteString(hexChunksSeparator)
 		buf.WriteString(string(hc))
+	}
+
+	return buf.String()
+}
+
+func (hcs HexChunks) ToBinary() BinaryChunks {
+	res := make(BinaryChunks, 0, len(hcs))
+
+	for _, chunk := range hcs {
+		bChunk := chunk.ToBinary()
+
+		res = append(res, bChunk)
+	}
+
+	return res
+}
+
+func (hc HexChunk) ToBinary() BinaryChunk {
+	num, err := strconv.ParseUint(string(hc), 16, chunksSize)
+	if err != nil {
+		panic("Can not parse the chunk: " + err.Error())
+	}
+
+	res := fmt.Sprintf("%08b", num)
+
+	return BinaryChunk(res)
+}
+
+func (bcs BinaryChunks) Join() string {
+	var buf strings.Builder
+
+	for _, bc := range bcs {
+		buf.WriteString(string(bc))
 	}
 
 	return buf.String()

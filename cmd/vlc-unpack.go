@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"archiver/lib/vlc"
 	"github.com/spf13/cobra"
 	"io"
 	"os"
@@ -9,7 +10,7 @@ import (
 )
 
 var vlcUnpackCmd = &cobra.Command{
-	Use:   "unpack",
+	Use:   "vlc",
 	Short: "unpack file",
 	Run:   unpack,
 }
@@ -33,7 +34,7 @@ func unpack(_ *cobra.Command, args []string) {
 		handleErr(err)
 	}
 
-	packed := vlc.Decode(data)
+	packed := vlc.Decode(string(data))
 
 	err = os.WriteFile(unpackedFileName(filePath), []byte(packed), 0644)
 	if err != nil {
