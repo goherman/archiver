@@ -30,17 +30,17 @@ func TestEncode(t *testing.T) {
 	tests := []struct {
 		name string
 		str  string
-		want string
+		want []byte
 	}{
 		{
 			name: "base test",
 			str:  "My name is Ted",
-			want: "20 30 3C 18 77 4A E4 4D 28",
+			want: []byte{32, 48, 60, 24, 119, 74, 228, 77, 40},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Encode(tt.str); got != tt.want {
+			if got := Encode(tt.str); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Encode() = %v, want %v", got, tt.want)
 			}
 		})
@@ -68,36 +68,15 @@ func Test_encodeBin(t *testing.T) {
 	}
 }
 
-func TestBinaryChunks_ToHex(t *testing.T) {
-	tests := []struct {
-		name string
-		bcs  BinaryChunks
-		want HexChunks
-	}{
-		{
-			name: "Base name",
-			bcs:  BinaryChunks{"0101111", "10000000"},
-			want: HexChunks{"2F", "80"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.bcs.ToHex(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToHex() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestDecode(t *testing.T) {
 	tests := []struct {
 		name        string
-		encodedText string
+		encodedText []byte
 		want        string
 	}{
 		{
-			name:        "Base test",
-			encodedText: "20 30 3C 18 77 4A E4 4D 28",
+			name:        "base test",
+			encodedText: []byte{32, 48, 60, 24, 119, 74, 228, 77, 40},
 			want:        "My name is Ted",
 		},
 	}
