@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
@@ -9,6 +10,8 @@ import (
 var rootCmd = &cobra.Command{
 	Short: "Simple archiver",
 }
+
+var ErrEmptyPath = errors.New("path to file is not specified")
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
