@@ -3,6 +3,7 @@ package cmd
 import (
 	"archiver/lib/compression"
 	"archiver/lib/compression/vlc"
+	"archiver/lib/compression/vlc/table/shannon_fano"
 	"github.com/spf13/cobra"
 	"io"
 	"os"
@@ -26,10 +27,11 @@ func pack(cmd *cobra.Command, args []string) {
 	method := cmd.Flag("method").Value.String()
 
 	switch method {
-	case "vlc":
-		encoder = vlc.New()
+	case "shannon_fano":
+		encoder = vlc.New(shannon_fano.NewGenerator())
 	default:
 		cmd.PrintErr("unknown method")
+		return
 	}
 
 	filePath := args[0]
@@ -37,11 +39,18 @@ func pack(cmd *cobra.Command, args []string) {
 	r, err := os.Open(filePath)
 	if err != nil {
 		handleErr(err)
+		return
 	}
+	defer func() {
+		if closeErr := r.Close(); closeErr != nil {
+			handleErr(closeErr)
+		}
+	}()
 
 	data, err := io.ReadAll(r)
 	if err != nil {
 		handleErr(err)
+		return
 	}
 
 	packed := encoder.Encode(string(data))
@@ -49,6 +58,7 @@ func pack(cmd *cobra.Command, args []string) {
 	err = os.WriteFile(packedFileName(filePath), packed, 0644)
 	if err != nil {
 		handleErr(err)
+		return
 	}
 }
 

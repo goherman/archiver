@@ -8,8 +8,8 @@ import (
 )
 
 type BinaryChunks []BinaryChunk
+
 type BinaryChunk string
-type encodingTable map[rune]string
 
 const chunksSize = 8
 
@@ -40,12 +40,13 @@ func (bcs BinaryChunks) Bytes() []byte {
 func (bc BinaryChunk) Byte() byte {
 	num, err := strconv.ParseUint(string(bc), 2, chunksSize)
 	if err != nil {
-		panic("Can not parse binary chunk: " + err.Error())
+		panic("can't parse binary chunk: " + err.Error())
 	}
 
 	return byte(num)
 }
 
+// Join joins chunks into one line and returns as string.
 func (bcs BinaryChunks) Join() string {
 	var buf strings.Builder
 
@@ -56,6 +57,8 @@ func (bcs BinaryChunks) Join() string {
 	return buf.String()
 }
 
+// splitByChunks splits binary string by chunks with given size,
+// i.g.: '100101011001010110010101' -> '10010101 10010101 10010101'
 func splitByChunks(bStr string, chunkSize int) BinaryChunks {
 	strLen := utf8.RuneCountInString(bStr)
 
