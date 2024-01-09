@@ -8,7 +8,7 @@
 ```shell
 $ go build
 ```
-### 2) Then run a this command
+### 2) Then run this command
 #### example:
 ```shell
 $ ./binary_file method -parameter algorithm_name file.txt
